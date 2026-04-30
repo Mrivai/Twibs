@@ -341,10 +341,10 @@ export default function App() {
               >
                 <button 
                   onClick={downloadImage}
-                  className="flex items-center gap-3 bg-blue-600 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 w-full sm:w-auto"
+                  className="flex items-center justify-center gap-3 bg-blue-600 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 w-full sm:w-auto"
                 >
                   <Download className="w-6 h-6" />
-                  SIMPAN & DOWNLOAD
+                  Download
                 </button>
               </motion.div>
             )}
