@@ -1,0 +1,6 @@
+{
+  "name": "Twibbonize Lite",
+  "description": "A simple and fast Twibbon maker app. Upload your photo, adjust it to the frame, and download your personalized image.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": []
+}
