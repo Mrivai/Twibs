@@ -9,7 +9,7 @@ interface Point {
 
 export default function App() {
   const [image, setImage] = useState<string | null>(null);
-  const [frame, setFrame] = useState<string>('/frame.svg');
+  const [frame, setFrame] = useState<string>('/frame.png');
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
