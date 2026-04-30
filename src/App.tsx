@@ -229,7 +229,7 @@ export default function App() {
             <Camera className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="font-extrabold text-2xl tracking-tight text-slate-800">TwibbonMakerPanbit</h1>
+            <h1 className="font-extrabold text-2xl tracking-tight text-slate-800">TwibbonPanbit</h1>
             <p className="text-sm font-medium text-slate-500">Cepat, Mudah, & Berkualitas</p>
           </div>
         </div>
@@ -450,7 +450,7 @@ export default function App() {
       </main>
 
       <footer className="max-w-7xl mx-auto mt-12 py-8 text-center text-slate-400">
-        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em]">Twibbonize Lite &copy; 2026 Powered BY TU Panbit</p>
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em]">&copy; 2026 Powered BY TU Panbit</p>
       </footer>
     </div>
   );
