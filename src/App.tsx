@@ -10,6 +10,7 @@ interface Point {
 export default function App() {
   const [image, setImage] = useState<string | null>(null);
   const [frame, setFrame] = useState<string>('/frame.png');
+  const [frameError, setFrameError] = useState<boolean>(false);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -28,6 +29,7 @@ export default function App() {
       const reader = new FileReader();
       reader.onload = (readerEvent) => {
         setFrame(readerEvent.target?.result as string);
+        setFrameError(false);
       };
       reader.readAsDataURL(file);
     }
@@ -42,8 +44,14 @@ export default function App() {
       const img = new Image();
       img.src = frame;
       img.onload = () => {
+        console.log("Frame loaded successfully");
         frameImgRef.current = img;
+        setFrameError(false);
         renderCanvas();
+      };
+      img.onerror = () => {
+        console.error("Failed to load frame from:", frame);
+        setFrameError(true);
       };
     }
   }, [frame]);
@@ -53,8 +61,12 @@ export default function App() {
       const img = new Image();
       img.src = image;
       img.onload = () => {
+        console.log("User image loaded successfully");
         userImgRef.current = img;
         renderCanvas();
+      };
+      img.onerror = () => {
+        console.error("Failed to load user image");
       };
     } else {
       userImgRef.current = null;
@@ -217,7 +229,7 @@ export default function App() {
             <Camera className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="font-extrabold text-2xl tracking-tight text-slate-800">TwibbonMaker</h1>
+            <h1 className="font-extrabold text-2xl tracking-tight text-slate-800">TwibbonPanbit</h1>
             <p className="text-sm font-medium text-slate-500">Cepat, Mudah, & Berkualitas</p>
           </div>
         </div>
@@ -310,6 +322,12 @@ export default function App() {
                 height={1000} 
                 className="absolute inset-0 w-full h-full pointer-events-none"
               />
+
+              {frameError && (
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-lg">
+                  Bingkai Gagal Dimuat
+                </div>
+              )}
 
               {isCameraActive && (
                 <div className="absolute inset-0 bg-black">
@@ -428,7 +446,7 @@ export default function App() {
       </main>
 
       <footer className="max-w-7xl mx-auto mt-12 py-8 text-center text-slate-400">
-        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em]">Twibbonize Lite &copy; 2026 Powered BY Gemini</p>
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em]">Twibbonize Lite &copy; 2026 Powered BY TU Panbit</p>
       </footer>
     </div>
   );
