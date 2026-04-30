@@ -229,7 +229,7 @@ export default function App() {
             <Camera className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="font-extrabold text-2xl tracking-tight text-slate-800">TwibbonPanbit</h1>
+            <h1 className="font-extrabold text-2xl tracking-tight text-slate-800">TwibbonMakerPanbit</h1>
             <p className="text-sm font-medium text-slate-500">Cepat, Mudah, & Berkualitas</p>
           </div>
         </div>
@@ -257,47 +257,11 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Grid Layout */}
-      <main className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+      {/* Main Layout */}
+      <main className="max-w-4xl mx-auto flex flex-col gap-6">
         
-        {/* Step 1: Input Card */}
-        <section className="md:col-span-4 bento-card p-8 flex flex-col gap-6">
-          <div>
-            <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">Langkah 1</span>
-            <h2 className="text-xl font-bold text-slate-800">Pilih Foto</h2>
-            <p className="text-slate-500 text-sm mt-1">Unggah foto terbaikmu untuk mulai mengedit twibbon.</p>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <button 
-              onClick={() => fileInputRef.current?.click()}
-              className="group relative w-full py-6 bg-blue-50 border-2 border-dashed border-blue-200 rounded-3xl flex flex-col items-center justify-center gap-2 text-blue-700 transition-all hover:bg-blue-100/50 hover:border-blue-300"
-            >
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                <Upload className="w-6 h-6" />
-              </div>
-              <span className="font-bold text-sm">Pilih File Foto</span>
-              <input 
-                ref={fileInputRef}
-                type="file" 
-                accept="image/*" 
-                onChange={handleFileUpload} 
-                className="hidden" 
-              />
-            </button>
-
-            <button 
-              onClick={startCamera}
-              className="w-full py-4 bg-white border border-slate-200 rounded-2xl flex items-center justify-center gap-3 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all active:scale-[0.98]"
-            >
-              <Camera className="w-5 h-5 opacity-70" />
-              Gunakan Kamera
-            </button>
-          </div>
-        </section>
-
-        {/* Main Canvas Area Card */}
-        <section className="md:col-span-8 bento-card overflow-hidden h-full min-h-[500px] flex flex-col">
+        {/* Main Canvas Area Card (Editor Preview) */}
+        <section className="bento-card overflow-hidden flex flex-col">
           <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -305,9 +269,9 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex-grow flex items-center justify-center p-8 bg-slate-50 canvas-bg">
+          <div className="flex-grow flex items-center justify-center p-6 sm:p-12 bg-slate-50 canvas-bg">
             <div 
-              className="relative w-full aspect-square max-w-[480px] bg-white shadow-2xl rounded-2xl overflow-hidden cursor-move touch-none"
+              className="relative w-full aspect-square max-w-[500px] bg-white shadow-2xl rounded-2xl overflow-hidden cursor-move touch-none"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -349,35 +313,86 @@ export default function App() {
           </div>
 
           {/* Download Bar */}
-          <div className="p-6 bg-white border-t border-slate-100 flex items-center justify-center sm:justify-end gap-3">
-             {image && (
-               <button 
-                onClick={downloadImage}
-                className="flex items-center gap-3 bg-blue-600 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95"
+          <AnimatePresence>
+            {image && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="p-6 bg-white border-t border-slate-100 flex items-center justify-center"
               >
-                <Download className="w-6 h-6" />
-                SIMPAN & DOWNLOAD
-              </button>
-             )}
-          </div>
+                <button 
+                  onClick={downloadImage}
+                  className="flex items-center gap-3 bg-blue-600 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 w-full sm:w-auto"
+                >
+                  <Download className="w-6 h-6" />
+                  SIMPAN & DOWNLOAD
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
 
-        {/* Step 2: Controls Card */}
-        <section className="md:col-span-4 bento-card p-8 flex flex-col gap-6">
-          <div>
-            <span className="inline-block px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">Langkah 2</span>
-            <h2 className="text-xl font-bold text-slate-800">Sesuaikan Foto</h2>
-            <p className="text-slate-500 text-sm mt-1">Atur ukuran dan posisi agar foto pas dalam bingkai.</p>
-          </div>
+        {/* Conditional Steps */}
+        <AnimatePresence mode="wait">
+          {!image ? (
+            /* Step 1: Input Card */
+            <motion.section 
+              key="step1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bento-card p-8 flex flex-col sm:flex-row items-center gap-8"
+            >
+              <div className="flex-1">
+                <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">Langkah 1</span>
+                <h2 className="text-2xl font-bold text-slate-800">Pilih Foto Anda</h2>
+                <p className="text-slate-500 text-sm mt-2 max-w-sm">Unggah foto terbaikmu atau gunakan kamera untuk mulai membuat twibbon keren hari ini.</p>
+              </div>
 
-          <AnimatePresence mode="wait">
-            {image ? (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="space-y-8"
-              >
+              <div className="flex flex-col gap-3 w-full sm:w-72">
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="group relative w-full py-6 bg-blue-50 border-2 border-dashed border-blue-200 rounded-3xl flex flex-col items-center justify-center gap-2 text-blue-700 transition-all hover:bg-blue-100/50 hover:border-blue-300"
+                >
+                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <Upload className="w-6 h-6" />
+                  </div>
+                  <span className="font-bold text-sm">Pilih File Foto</span>
+                  <input 
+                    ref={fileInputRef}
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleFileUpload} 
+                    className="hidden" 
+                  />
+                </button>
+
+                <button 
+                  onClick={startCamera}
+                  className="w-full py-4 bg-white border border-slate-200 rounded-2xl flex items-center justify-center gap-3 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all active:scale-[0.98]"
+                >
+                  <Camera className="w-5 h-5 opacity-70" />
+                  Gunakan Kamera
+                </button>
+              </div>
+            </motion.section>
+          ) : (
+            /* Step 2: Controls Card */
+            <motion.section 
+              key="step2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bento-card p-8 flex flex-col lg:flex-row gap-8"
+            >
+              <div className="flex-1">
+                <span className="inline-block px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">Langkah 2</span>
+                <h2 className="text-2xl font-bold text-slate-800">Sesuaikan Foto</h2>
+                <p className="text-slate-500 text-sm mt-2">Gunakan kontrol di samping untuk mengatur ukuran dan posisi foto agar pas dalam bingkai.</p>
+              </div>
+
+              <div className="flex-1 space-y-6">
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm font-bold text-slate-700">
                     <span>Ukuran (Zoom)</span>
@@ -386,7 +401,7 @@ export default function App() {
                   <input 
                     type="range"
                     min="0.1"
-                    max="3"
+                    max="5"
                     step="0.01"
                     value={scale}
                     onChange={(e) => setScale(parseFloat(e.target.value))}
@@ -408,41 +423,30 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="text-sm font-bold text-slate-700">Posisi & Navigasi</div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button 
-                      onClick={() => setPosition({ x: 0, y: 0 })}
-                      className="col-span-2 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-bold text-xs flex items-center justify-center hover:bg-slate-100 transition-colors"
-                    >
-                      <Move className="w-4 h-4 mr-2" /> Reset Posisi
-                    </button>
-                    <button 
-                      onClick={() => fileInputRef.current?.click()}
-                      className="py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-bold text-xs flex items-center justify-center hover:bg-slate-100 transition-colors"
-                    >
-                      Ganti Foto
-                    </button>
-                    <button 
-                      onClick={resetEditor}
-                      className="py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-bold text-xs flex items-center justify-center hover:bg-slate-100 transition-colors text-red-500"
-                    >
-                      Selesai
-                    </button>
-                  </div>
+                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
+                  <button 
+                    onClick={() => setPosition({ x: 0, y: 0 })}
+                    className="col-span-2 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-bold text-xs flex items-center justify-center hover:bg-slate-100 transition-colors"
+                  >
+                    <Move className="w-4 h-4 mr-2" /> Reset Posisi
+                  </button>
+                  <button 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-bold text-xs flex items-center justify-center hover:bg-slate-100 transition-colors"
+                  >
+                    Ganti Foto
+                  </button>
+                  <button 
+                    onClick={resetEditor}
+                    className="py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-bold text-xs flex items-center justify-center hover:bg-slate-100 transition-colors text-red-500"
+                  >
+                    Selesai
+                  </button>
                 </div>
-              </motion.div>
-            ) : (
-              <div className="py-12 px-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm opacity-50">
-                  <Move className="w-6 h-6 text-slate-400" />
-                </div>
-                <p className="text-sm font-medium text-slate-400">Silakan pilih foto terlebih dahulu untuk melihat kontrol fitur ini.</p>
               </div>
-            )}
-          </AnimatePresence>
-        </section>
-
+            </motion.section>
+          )}
+        </AnimatePresence>
       </main>
 
       <footer className="max-w-7xl mx-auto mt-12 py-8 text-center text-slate-400">
