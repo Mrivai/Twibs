@@ -9,6 +9,7 @@ interface Point {
 
 export default function App() {
   const [image, setImage] = useState<string | null>(null);
+  const [imageSource, setImageSource] = useState<'upload' | 'camera' | null>(null);
   const [frame, setFrame] = useState<string>('/frame.png');
   const [frameError, setFrameError] = useState<boolean>(false);
   const [scale, setScale] = useState(1);
@@ -119,6 +120,7 @@ export default function App() {
       const reader = new FileReader();
       reader.onload = (readerEvent) => {
         setImage(readerEvent.target?.result as string);
+        setImageSource('upload');
         setPosition({ x: 0, y: 0 });
         setScale(1);
       };
@@ -128,6 +130,7 @@ export default function App() {
 
   const startCamera = async () => {
     setIsCameraActive(true);
+    setImageSource('camera');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (videoRef.current) {
@@ -147,7 +150,12 @@ export default function App() {
       tempCanvas.width = video.videoWidth;
       tempCanvas.height = video.videoHeight;
       const ctx = tempCanvas.getContext('2d');
-      ctx?.drawImage(video, 0, 0);
+      if (ctx) {
+        // Mirror the image horizontally to match the preview
+        ctx.translate(tempCanvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0);
+      }
       setImage(tempCanvas.toDataURL('image/jpeg'));
       
       // Stop camera
@@ -225,8 +233,8 @@ export default function App() {
       {/* Header Bento Card */}
       <header className="max-w-7xl mx-auto mb-6 bento-card p-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
-            <Camera className="w-6 h-6 text-white" />
+          <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 p-1">
+            <img src="/logo.png" alt="Logo TwibbonPanbit" className="w-full h-full object-contain" />
           </div>
           <div>
             <h1 className="font-extrabold text-2xl tracking-tight text-slate-800">TwibbonPanbit</h1>
@@ -301,11 +309,21 @@ export default function App() {
                     playsInline 
                     className="w-full h-full object-cover scale-x-[-1]"
                   />
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
+                  {/* Digital Viewfinder Frame Overlay */}
+                  {frameImgRef.current && (
+                    <img 
+                      src={frame} 
+                      alt="Frame Preview" 
+                      className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+                    />
+                  )}
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
                     <button 
                       onClick={capturePhoto}
-                      className="w-16 h-16 bg-white rounded-full border-4 border-white/30 active:scale-95 transition-transform shadow-2xl"
-                    />
+                      className="w-16 h-16 bg-white rounded-full border-4 border-white/30 active:scale-95 transition-transform shadow-2xl flex items-center justify-center text-slate-400 hover:text-blue-500"
+                    >
+                      <Camera className="w-8 h-8" />
+                    </button>
                   </div>
                 </div>
               )}
@@ -431,7 +449,13 @@ export default function App() {
                     <Move className="w-4 h-4 mr-2" /> Reset Posisi
                   </button>
                   <button 
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => {
+                      if (imageSource === 'camera') {
+                        startCamera();
+                      } else {
+                        fileInputRef.current?.click();
+                      }
+                    }}
                     className="py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-bold text-xs flex items-center justify-center hover:bg-slate-100 transition-colors"
                   >
                     Ganti Foto
